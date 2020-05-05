@@ -7,3 +7,4 @@ dice_1.Anchored = false
 wait(1)
 
 dice_2.Anchored = false
+
