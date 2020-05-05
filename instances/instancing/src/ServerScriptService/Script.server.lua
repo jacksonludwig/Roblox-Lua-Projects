@@ -11,6 +11,7 @@ part.CanCollide = false
 
 part.Parent = workspace
 
+local partList = {}
 local function makePart(name, zPos)
     local genPart = Instance.new("Part")
     genPart.Name = name
@@ -20,10 +21,18 @@ local function makePart(name, zPos)
     genPart.Position = Vector3.new(5, 5, zPos)
 
     genPart.Parent = workspace
+    partList[#partList + 1] = genPart
 end
 
 local count = 0
 for i = 0, 100, 1 do
     count = count + 10 
     makePart("genPart" .. i, count)
+end
+
+wait(5)
+
+for _, block in ipairs(partList) do
+    block.Color = Color3.new(0, 0, 0)
+    wait(1)
 end
