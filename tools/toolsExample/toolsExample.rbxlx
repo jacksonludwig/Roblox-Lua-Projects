@@ -40,26 +40,26 @@
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<CoordinateFrame name="CFrame">
-					<X>-135.790604</X>
-					<Y>4.62168217</Y>
-					<Z>14.244503</Z>
-					<R00>-0.85672313</R00>
-					<R01>-0.30220443</R01>
-					<R02>0.417968869</R02>
+					<X>-161.549438</X>
+					<Y>20.9642849</Y>
+					<Z>51.7600784</Z>
+					<R00>0.331318796</R00>
+					<R01>0.474161863</R01>
+					<R02>-0.815719485</R02>
 					<R10>-0</R10>
-					<R11>0.810368001</R11>
-					<R12>0.585921109</R12>
-					<R20>-0.515776634</R20>
-					<R21>0.501972139</R21>
-					<R22>-0.694261014</R22>
+					<R11>0.864550233</R11>
+					<R12>0.502546251</R12>
+					<R20>0.943518877</R20>
+					<R21>-0.166503012</R21>
+					<R22>0.286441773</R22>
 				</CoordinateFrame>
 				<Ref name="CameraSubject">null</Ref>
 				<token name="CameraType">0</token>
 				<float name="FieldOfView">70</float>
 				<CoordinateFrame name="Focus">
-					<X>-137.897171</X>
-					<Y>1.66863406</Y>
-					<Z>17.7435856</Z>
+					<X>-159.917999</X>
+					<Y>19.9591923</Y>
+					<Z>51.1871948</Z>
 					<R00>1</R00>
 					<R01>0</R01>
 					<R02>0</R02>
@@ -426,7 +426,7 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 					<R22>1</R22>
 				</CoordinateFrame>
 				<bool name="ManualActivationOnly">false</bool>
-				<string name="Name">Tool</string>
+				<string name="Name">Wand</string>
 				<bool name="RequiresHandle">true</bool>
 				<BinaryString name="Tags"></BinaryString>
 				<Content name="TextureId"><null></null></Content>
@@ -508,14 +508,75 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 					</Vector3>
 				</Properties>
 			</Item>
-			<Item class="Script" referent="RBX2EB5C622971B4839B4853EBE13DC85EA">
+			<Item class="LocalScript" referent="RBXBE7CEF859201476E9DE5180D08372E9A">
 				<Properties>
 					<BinaryString name="AttributesSerialize"></BinaryString>
 					<bool name="Disabled">false</bool>
 					<Content name="LinkedSource"><null></null></Content>
-					<string name="Name">Script</string>
-					<string name="ScriptGuid">{375554FE-CF16-4175-ADD8-D40E52222C97}</string>
-					<ProtectedString name="Source"><![CDATA[print("Hello world!")
+					<string name="Name">LocalScript</string>
+					<string name="ScriptGuid">{921172B5-430A-4026-8A44-7F652F934BC1}</string>
+					<ProtectedString name="Source"><![CDATA[local tool = script.Parent
+local player = game:GetService("Players").LocalPlayer
+local ws = game:GetService("Workspace")
+local debris = game:GetService("Debris")
+
+local function shootRay(tool, mouse)
+    local ray = Ray.new(tool.Handle.CFrame.p, (mouse.Hit.p - tool.Handle
+        .CFrame.p).unit * 300)
+    local part, position = ws:FindPartOnRay(ray, player.Character, -- args: part hit, part to ignore, treat terrain as cube, hit water
+        false, true)
+    return ray, part, position
+end
+
+local function stretchBeamToHit(tool, beam, hitPosition)
+    local distance = (tool.Handle.CFrame.p - hitPosition).magnitude -- subtracts to vectors to get distance
+    beam.Size = Vector3.new(0.3, 0.3, distance) -- set size to .3, .3, <length of distance to where we clicked>
+    beam.CFrame = CFrame.new(tool.Handle.CFrame.p, hitPosition) * -- put our beam/part in the right place (our wand)
+        CFrame.new(0, 0, -distance / 2)
+end
+
+local function setBeamVisuals(beam)
+    beam.BrickColor = BrickColor.new("Bright red")
+    beam.FormFactor = "Custom"
+    beam.Material = "Neon"
+    beam.Transparency = 0.25
+    beam.Anchored = true
+    beam.Locked = true
+    beam.CanCollide = false
+end
+
+local function makeBeam(tool, hitPosition)
+    local beam = Instance.new("Part") -- make the part but don't put it in workspace yet
+    setBeamVisuals(beam)
+    stretchBeamToHit(tool, beam, hitPosition)
+    beam.Parent = ws -- put part in workspace
+    debris:AddItem(beam, 0.1) -- add part to debris service so it disappears after 0.1 seconds
+    return beam
+end
+
+local function doDamage(part)
+    local humanoid = part.Parent:FindFirstChild("Humanoid") -- returns hit player or nil if miss
+
+    if not humanoid then -- nil is false and objects are true, so this works
+        humanoid = part.Parent.Parent:FindFirstChild("Humanoid") -- check part's parent to make sure we didn't hit hat, etc.
+    end
+
+    if humanoid then
+        humanoid:TakeDamage(30)
+    end
+end
+
+local function setToolListener()
+    tool.Equipped:Connect(function(mouse) -- check for equip event
+        mouse.Button1Down:Connect(function() -- check for click event
+            local ray, part, position = shootRay(tool, mouse) -- make ray to clicked location
+            local beam = makeBeam(tool, position) -- make part to clicked location
+            doDamage(part) -- do damage if it hit a player
+        end)
+    end)
+end
+
+setToolListener()
 ]]></ProtectedString>
 					<BinaryString name="Tags"></BinaryString>
 				</Properties>
