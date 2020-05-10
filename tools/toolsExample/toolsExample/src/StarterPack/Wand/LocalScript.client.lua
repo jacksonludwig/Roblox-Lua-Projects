@@ -15,7 +15,7 @@ local function stretchBeamToHit(tool, beam, hitPosition)
     local distance = (tool.Handle.CFrame.p - hitPosition).magnitude -- subtracts to vectors to get distance
     beam.Size = Vector3.new(0.3, 0.3, distance) -- set size to .3, .3, <length of distance to where we clicked>
     beam.CFrame = CFrame.new(tool.Handle.CFrame.p, hitPosition) * -- put our beam/part in the right place (our wand)
-        CFrame.new(0, 0, -distance / 2) -- parts rotate from center by default and point towards you, so: / 2 and * -1
+        CFrame.new(0, 0, -distance / 2) -- flip the beam around by moving it -distance/2 studs forward
 end
 
 local function setBeamVisuals(beam)
