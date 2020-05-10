@@ -5,7 +5,7 @@ local debris = game:GetService("Debris")
 
 local function shootRay(tool, mouse)
     local ray = Ray.new(tool.Handle.CFrame.p, (mouse.Hit.p - tool.Handle
-        .CFrame.p).unit * 300)
+        .CFrame.p).unit * 300) -- get direction to where we clicked and use .unit * x to make the ray as long as we desire
     local part, position = ws:FindPartOnRay(ray, player.Character, -- args: part hit, part to ignore, treat terrain as cube, hit water
         false, true)
     return ray, part, position
@@ -15,7 +15,7 @@ local function stretchBeamToHit(tool, beam, hitPosition)
     local distance = (tool.Handle.CFrame.p - hitPosition).magnitude -- subtracts to vectors to get distance
     beam.Size = Vector3.new(0.3, 0.3, distance) -- set size to .3, .3, <length of distance to where we clicked>
     beam.CFrame = CFrame.new(tool.Handle.CFrame.p, hitPosition) * -- put our beam/part in the right place (our wand)
-        CFrame.new(0, 0, -distance / 2) -- rotate the beam on its z-axis by -distance / 2
+        CFrame.new(0, 0, -distance / 2) -- parts rotate from center by default and point towards you, so: / 2 and * -1
 end
 
 local function setBeamVisuals(beam)
@@ -38,6 +38,8 @@ local function makeBeam(tool, hitPosition)
 end
 
 local function doDamage(part)
+    if part == nil then return end
+
     local humanoid = part.Parent:FindFirstChild("Humanoid") -- returns hit player or nil if miss
 
     if not humanoid then -- nil is false and objects are true, so this works
