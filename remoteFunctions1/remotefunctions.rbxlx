@@ -40,26 +40,26 @@
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<CoordinateFrame name="CFrame">
-					<X>1.83345222</X>
-					<Y>3.07532573</Y>
-					<Z>11.4085627</Z>
-					<R00>0.904823422</R00>
-					<R01>-0.156743944</R01>
-					<R02>0.395886362</R02>
-					<R10>-0</R10>
-					<R11>0.929775417</R11>
-					<R12>0.368127495</R12>
-					<R20>-0.425787121</R20>
-					<R21>-0.333090395</R21>
-					<R22>0.841282487</R22>
+					<X>-1.34138012</X>
+					<Y>2.44228077</Y>
+					<Z>13.6350985</Z>
+					<R00>0.999390662</R00>
+					<R01>-0.0036486045</R01>
+					<R02>0.0347133577</R02>
+					<R10>-2.32830644e-10</R10>
+					<R11>0.994521677</R11>
+					<R12>0.104530841</R12>
+					<R20>-0.0349045768</R20>
+					<R21>-0.104467146</R21>
+					<R22>0.993915677</R22>
 				</CoordinateFrame>
 				<Ref name="CameraSubject">null</Ref>
 				<token name="CameraType">0</token>
 				<float name="FieldOfView">70</float>
 				<CoordinateFrame name="Focus">
-					<X>1.0416801</X>
-					<Y>2.33907127</Y>
-					<Z>9.72599888</Z>
+					<X>-1.41080689</X>
+					<Y>2.23321891</Y>
+					<Z>11.6472654</Z>
 					<R00>1</R00>
 					<R01>0</R01>
 					<R02>0</R02>
@@ -759,23 +759,20 @@ gcLgc4RKxr21zq2UlJSM]]></BinaryString>
 					<Content name="LinkedSource"><null></null></Content>
 					<string name="Name">LocalScript</string>
 					<string name="ScriptGuid">{0F060470-DEC3-4824-A474-399148609FEA}</string>
-					<ProtectedString name="Source"><![CDATA[local parent = script.Parent
-local textbox = parent:WaitForChild("TextBox")
-local startButton = parent:WaitForChild("TextButton")
-local workspace = game:GetService("Workspace")
-local boardlabel = workspace.board.SurfaceGui.TextLabel
+					<ProtectedString name="Source"><![CDATA[local replicatedStorage = game:GetService("ReplicatedStorage")
+local textbox = script.Parent:WaitForChild("TextBox")
+local button = script.Parent:WaitForChild("TextButton")
 
-local function setButtonListener()
-    startButton.MouseButton1Click:Connect(function()
-        if textbox.text == "1234" then
-            --boardlabel.Text = "UNLOCKED"
-        else
-            print("Password incorrect!")
-        end
+local remoteFunction = replicatedStorage.RemoteFunction
+
+local function connectButton()
+    button.MouseButton1Click:Connect(function()
+        local result = remoteFunction:InvokeServer(textbox.Text)
+        print("Was code successful: " .. tostring(result))
     end)
 end
 
-setButtonListener()
+connectButton()
 ]]></ProtectedString>
 					<BinaryString name="Tags"></BinaryString>
 				</Properties>
@@ -904,7 +901,24 @@ setButtonListener()
 				<Content name="LinkedSource"><null></null></Content>
 				<string name="Name">Script</string>
 				<string name="ScriptGuid">{80E15917-97A9-4F5D-9DE3-184FB1846E73}</string>
-				<ProtectedString name="Source"><![CDATA[print("Hello world!")
+				<ProtectedString name="Source"><![CDATA[local replicatedStorage = game:GetService("ReplicatedStorage")
+local remoteFunction = replicatedStorage.RemoteFunction
+
+local ws = game:GetService("Workspace")
+local boardlabel = ws.board.SurfaceGui.TextLabel
+
+local function setServerInvokeOnRemoteFunc()
+    remoteFunction.OnServerInvoke = function(player, code)
+        if code == "1234" then
+            boardlabel.Text = "UNLOCKED"
+            return true
+        else
+            return false
+        end
+    end
+end
+
+setServerInvokeOnRemoteFunc()
 ]]></ProtectedString>
 				<BinaryString name="Tags"></BinaryString>
 			</Properties>
@@ -923,6 +937,13 @@ setButtonListener()
 			<string name="Name">ReplicatedStorage</string>
 			<BinaryString name="Tags"></BinaryString>
 		</Properties>
+		<Item class="RemoteFunction" referent="RBXCFF3E3D4EDDF4B55B4A5EAAC3FF5E550">
+			<Properties>
+				<BinaryString name="AttributesSerialize"></BinaryString>
+				<string name="Name">RemoteFunction</string>
+				<BinaryString name="Tags"></BinaryString>
+			</Properties>
+		</Item>
 	</Item>
 	<Item class="LuaWebService" referent="RBX7F55BF8DCC2C4B6181B8F618051FB65A">
 		<Properties>

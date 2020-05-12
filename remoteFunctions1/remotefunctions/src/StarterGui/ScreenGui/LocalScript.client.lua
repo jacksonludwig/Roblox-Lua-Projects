@@ -1,17 +1,14 @@
-local parent = script.Parent
-local textbox = parent:WaitForChild("TextBox")
-local startButton = parent:WaitForChild("TextButton")
-local workspace = game:GetService("Workspace")
-local boardlabel = workspace.board.SurfaceGui.TextLabel
+local replicatedStorage = game:GetService("ReplicatedStorage")
+local textbox = script.Parent:WaitForChild("TextBox")
+local button = script.Parent:WaitForChild("TextButton")
 
-local function setButtonListener()
-    startButton.MouseButton1Click:Connect(function()
-        if textbox.text == "1234" then
-            --boardlabel.Text = "UNLOCKED"
-        else
-            print("Password incorrect!")
-        end
+local remoteFunction = replicatedStorage.RemoteFunction
+
+local function connectButton()
+    button.MouseButton1Click:Connect(function()
+        local result = remoteFunction:InvokeServer(textbox.Text)
+        print("Was code successful: " .. tostring(result))
     end)
 end
 
-setButtonListener()
+connectButton()
