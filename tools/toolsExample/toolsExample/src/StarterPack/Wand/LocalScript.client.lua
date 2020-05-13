@@ -3,6 +3,12 @@ local player = game:GetService("Players").LocalPlayer
 local ws = game:GetService("Workspace")
 local debris = game:GetService("Debris")
 
+local function makeExplosion(pos)
+    local explosion = Instance.new("Explosion")
+    explosion.Position = pos
+    return explosion
+end
+
 local function shootRay(tool, mouse)
     local ray = Ray.new(tool.Handle.CFrame.p, (mouse.Hit.p - tool.Handle
         .CFrame.p).unit * 300) -- get direction to where we clicked and use .unit * x to make the ray as long as we desire
@@ -29,11 +35,14 @@ local function setBeamVisuals(beam)
 end
 
 local function makeBeam(tool, hitPosition)
+    local explosion = makeExplosion(hitPosition)
+    explosion.Parent = ws
     local beam = Instance.new("Part") -- make the part but don't put it in workspace yet
     setBeamVisuals(beam)
     stretchBeamToHit(tool, beam, hitPosition)
-    beam.Parent = ws -- put part in workspace
+    beam.Parent = ws -- put part in workspace  
     debris:AddItem(beam, 0.1) -- add part to debris service so it disappears after 0.1 seconds
+    debris:AddItem(explosion, 0.5)
     return beam
 end
 
