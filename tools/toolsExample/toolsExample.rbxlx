@@ -803,7 +803,6 @@ end]]></ProtectedString>
 			<float name="FogStart">0</float>
 			<float name="GeographicLatitude">41.7332993</float>
 			<bool name="GlobalShadows">true</bool>
-			<bool name="LegacyOutlines">false</bool>
 			<string name="Name">Lighting</string>
 			<Color3 name="OutdoorAmbient">
 				<R>0.5</R>

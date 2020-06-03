@@ -5,9 +5,7 @@ local playerList = game:GetService("Players")
 
 local function anchorParts(char)
     for _, part in ipairs(char.Character:GetChildren()) do
-        if part:IsA("BasePart") then
-            part.Anchored = true
-        end
+        if part:IsA("BasePart") then part.Anchored = true end
     end
 end
 
